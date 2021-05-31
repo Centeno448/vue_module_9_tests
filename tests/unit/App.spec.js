@@ -74,7 +74,7 @@ test('App.vue muestra la nota actual cuándo es seleccionada | Asegúrate de que
     }
   });
 
-  const buttons = wrapper.findAll('button').filter(button => button.text().toLowerCase() !== "crear nota");;
+  const buttons = wrapper.findAll('button').filter(button => button.text().toLowerCase() !== "crear nota");
 
   for (let i = 0; i < buttons.length; i++) {
     const button = buttons[i];
@@ -212,7 +212,7 @@ test('App utiliza una ref llamada notaTitulo para hacerle focus al input del tit
 
 test('App guarda las notas en localStorage | Asegúrate de que el watch tenga un handler que escriba las notas en localStorage en al misma forma que el ejemplo', async () => {
   const notas = [];
-  const nuevaNota = [{titulo: "nueva nota", contenido: "nuevo contenido"}]
+  const nuevaNota = [{titulo: "nueva nota", contenido: "nuevo contenido"}];
 
   const setItemSpy = jest.spyOn(window.localStorage, 'setItem');
 
