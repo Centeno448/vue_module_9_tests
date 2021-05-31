@@ -1,6 +1,29 @@
 import { mount, shallowMount } from "@vue/test-utils";
 import App from "@/App.vue";
 
+const localStorageMock = (() => {
+  let store = {};
+
+  return {
+    getItem(key) {
+      return store[key] || null;
+    },
+    setItem(key, value) {
+      store[key] = value.toString();
+    },
+    removeItem(key) {
+      delete store[key];
+    },
+    clear() {
+      store = {};
+    }
+  };
+})();
+
+Object.defineProperty(window, 'localStorage', {
+  value: localStorageMock
+});
+
 test('App.vue muestra el titulo de las notas dentro de una lista | Asegúrate de que App.vue defina en su función data la propiedad "notas", y que por cada elemento se despliegue un boton con el titulo de la nota', () => {
   const notas = [{ titulo: "testing 12", contenido: "Contenido 1" }, { titulo: "testing 3", contenido: "Contenido 1" }];
 
@@ -185,4 +208,52 @@ test('App utiliza una ref llamada notaTitulo para hacerle focus al input del tit
   expect(wrapper.vm.$refs.notaTitulo).toBeDefined();
 
   expect(wrapper.vm.$refs.notaTitulo).toBe(document.activeElement);
+});
+
+test('App guarda las notas en localStorage | Asegúrate de que el watch tenga un handler que escriba las notas en localStorage en al misma forma que el ejemplo', async () => {
+  const notas = [];
+  const nuevaNota = [{titulo: "nueva nota", contenido: "nuevo contenido"}]
+
+  const setItemSpy = jest.spyOn(window.localStorage, 'setItem');
+
+  const wrapper = shallowMount(App, {
+    data() {
+      return {
+        notas,
+        notaActual: null
+      };
+    }
+  });
+
+  const newNoteButton = wrapper.findAll('button').find(button => button.text().toLowerCase() === 'crear nota');
+
+  await newNoteButton.trigger('click');
+
+  await wrapper.find('textarea').setValue('hola');
+  await wrapper.find('input[type="text"]').setValue(nuevaNota.titulo);
+
+
+  expect(wrapper.vm.$options.watch.notas.handler).toBeDefined();
+  wrapper.vm.$options.watch.notas.handler.call(wrapper.vm, nuevaNota);
+  expect(setItemSpy).toHaveBeenCalledWith('notas',JSON.stringify(nuevaNota));
+  setItemSpy.mockClear();
+});
+
+
+test('App guarda las notas en localStorage | Asegúrate de que el watch tenga un handler que escriba las notas en localStorage en al misma forma que el ejemplo', async () => {
+  const notas = [];
+
+  const getItemSpy = jest.spyOn(window.localStorage, 'getItem');
+
+  const wrapper = mount(App, {
+    data() {
+      return {
+        notas,
+        notaActual: null
+      };
+    }
+  });
+
+  expect(getItemSpy).toHaveBeenCalledWith('notas');
+  getItemSpy.mockClear();
 });
