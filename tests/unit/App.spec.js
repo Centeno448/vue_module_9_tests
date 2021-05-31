@@ -240,7 +240,7 @@ test('App guarda las notas en localStorage | Asegúrate de que el watch tenga un
 });
 
 
-test('App guarda las notas en localStorage | Asegúrate de que el watch tenga un handler que escriba las notas en localStorage en al misma forma que el ejemplo', async () => {
+test('App obtiene las notas de localStorage al montar componente | Asegúrate de que app obtenga las notas de localStorage en mounted()', async () => {
   const notas = [];
 
   const getItemSpy = jest.spyOn(window.localStorage, 'getItem');
