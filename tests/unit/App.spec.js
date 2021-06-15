@@ -24,7 +24,7 @@ beforeAll(() => {
   Object.defineProperty(window, 'localStorage', {
     value: localStorageMock
   });
-})
+});
 
 
 
